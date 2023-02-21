@@ -116,7 +116,7 @@ func virtualMachineCommands(
 		lcc,
 		logger,
 		optionalDepGroups,
-		config.NewLimaApplier(fc, fs, fp.LimaOverrideConfigPath()),
+		config.NewLimaApplier(fc, ecc, fs, fp.LimaOverrideConfigPath(), system.NewStdLib()),
 		config.NewNerdctlApplier(fssh.NewDialer(), fs, fp.LimaSSHPrivateKeyPath(), system.NewStdLib()),
 		fp,
 		fs,

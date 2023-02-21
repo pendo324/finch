@@ -134,11 +134,6 @@ containerd:
 # multiple times, e.g. when the host VM is being restarted.
 # 🟢 Builtin default: null
 provision:
-# Install packages needed for QEMU user-mode emulation
-- mode: system
-  script: |
-    #!/bin/bash
-    dnf install -y --setopt=install_weak_deps=False qemu-user-static-aarch64 qemu-user-static-arm qemu-user-static-x86
 - mode: boot
   script: |
     systemctl stop NetworkManager-wait-online.service
@@ -148,8 +143,10 @@ provision:
 - mode: user
   script: |
     #!/bin/bash
-    sudo chown $USER /mnt/lima-finch
-
+    
+    sudo mkdir -p /mnt/lima-finch
+    sudo chown -R $USER /mnt/lima-finch
+    
     # https://github.com/containerd/nerdctl/blob/cffdf87ff4d648a5344eea1406bb95ca3ad7eaa4/extras/rootless/containerd-rootless.sh#L144-L146
     # XDG_DATA_HOME & ~/.local/share: https://github.com/containerd/nerdctl/blob/cffdf87ff4d648a5344eea1406bb95ca3ad7eaa4/extras/rootless/containerd-rootless.sh#L51
     mkdir -p /mnt/lima-finch/containerd ~/.local/share/containerd
@@ -167,6 +164,8 @@ provision:
     # XDG_DATA_HOME & ~/.local/share: https://github.com/containerd/nerdctl/blob/cffdf87ff4d648a5344eea1406bb95ca3ad7eaa4/extras/rootless/containerd-rootless.sh#L51
     mkdir -p /mnt/lima-finch/cni-local ~/.local/share/cni
     sudo mount --bind /mnt/lima-finch/cni-local ~/.local/share/cni
+
+    sudo chown -R $USER /mnt/lima-finch
 
     systemctl --user restart containerd.service
 
