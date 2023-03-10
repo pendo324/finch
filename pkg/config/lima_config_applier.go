@@ -50,7 +50,7 @@ func NewLimaApplier(cfg *Finch, cmdCreator command.Creator, fs afero.Fs, limaCon
 
 // Apply writes Lima-specific config values from Finch's config to the supplied lima config file path.
 // Apply will create a lima config file at the path if it does not exist.
-func (lca *limaConfigApplier) Apply(isInit bool, depsErr bool) error {
+func (lca *limaConfigApplier) Apply(isInit bool) error {
 	if cfgExists, err := afero.Exists(lca.fs, lca.limaConfigPath); err != nil {
 		return fmt.Errorf("error checking if file at path %s exists, error: %w", lca.limaConfigPath, err)
 	} else if !cfgExists {
@@ -79,7 +79,7 @@ func (lca *limaConfigApplier) Apply(isInit bool, depsErr bool) error {
 	}
 
 	if isInit {
-		cfgAfterInit, err := lca.applyInit(&limaCfg, depsErr)
+		cfgAfterInit, err := lca.applyInit(&limaCfg)
 		if err != nil {
 			return fmt.Errorf("failed to apply init-only config values: %w", err)
 		}
@@ -99,115 +99,94 @@ func (lca *limaConfigApplier) Apply(isInit bool, depsErr bool) error {
 }
 
 // applyInit changes settings that will only apply to the VM after a new init.
-func (lca *limaConfigApplier) applyInit(limaCfg *limayaml.LimaYAML, depsErr bool) (*limayaml.LimaYAML, error) {
+func (lca *limaConfigApplier) applyInit(limaCfg *limayaml.LimaYAML) (*limayaml.LimaYAML, error) {
 	hasSupport, hasSupportErr := lca.supportsVirtualizationFramework()
-	if lca.cfg.Rosetta != nil &&
-		*lca.cfg.Rosetta == true &&
+	if *lca.cfg.Rosetta == true &&
 		lca.systemDeps.OS() == "darwin" &&
 		lca.systemDeps.Arch() == "arm64" {
 
 		if hasSupportErr != nil {
 			return nil, fmt.Errorf("failed to check for virtualization framework support: %w", hasSupportErr)
 		}
-		if *hasSupport == true {
-			limaCfg.Rosetta.Enabled = true
-			limaCfg.Rosetta.BinFmt = true
-			limaCfg.VMType = pointer.String("vz")
+		if hasSupport == false {
+			return nil, fmt.Errorf(`system does not have virtualization framework support, change vmType to "qemu"`)
 		}
-		// remove the user mode emulation package installation script if its included
-		if idx, hasScript := hasUserModeEmulationInstallationScript(limaCfg); hasScript {
-			if len(limaCfg.Provision) > 0 {
-				limaCfg.Provision = append(limaCfg.Provision[:*idx], limaCfg.Provision[*idx+1:]...)
-			}
-		}
-		// remove the finch-shared network if its included
-		if idx, hasNetwork := hasFinchSharedNetwork(limaCfg); !hasNetwork {
-			if len(limaCfg.Networks) > 0 {
-				limaCfg.Networks = append(limaCfg.Networks[:*idx], limaCfg.Networks[*idx+1:]...)
-			}
-		}
+
+		limaCfg.Rosetta.Enabled = true
+		limaCfg.Rosetta.BinFmt = true
+		limaCfg.VMType = pointer.String("vz")
+		limaCfg.MountType = pointer.String("virtiofs")
+		toggleUserModeEmulationInstallationScript(limaCfg, false)
 	} else {
-		if lca.cfg.VMType != nil && *lca.cfg.VMType == "vz" {
+		if *lca.cfg.VMType == "vz" {
 			if hasSupportErr != nil {
 				return nil, fmt.Errorf("failed to check for virtualization framework support: %w", hasSupportErr)
 			}
-			if !*hasSupport {
-				return nil, fmt.Errorf("system does not have virtualization framework support")
+			if !hasSupport {
+				return nil, fmt.Errorf(`system does not have virtualization framework support, change vmType to "qemu"`)
 			}
-		} else if (lca.cfg.VMType == nil || *lca.cfg.VMType == "qemu") && !depsErr {
-			// network dependencies installed successfully, add the network config
-			if _, hasNetwork := hasFinchSharedNetwork(limaCfg); !hasNetwork {
-				limaCfg.Networks = append(limaCfg.Networks, limayaml.Network{Lima: "finch-shared"})
-			}
+			limaCfg.MountType = pointer.String("virtiofs")
+		} else if *lca.cfg.VMType == "qemu" {
+			limaCfg.MountType = pointer.String("reverse-sshfs")
 		}
 		limaCfg.Rosetta = limayaml.Rosetta{}
-		limaCfg := addUserModeEmulationInstallationScript(limaCfg)
 		limaCfg.VMType = lca.cfg.VMType
+		toggleUserModeEmulationInstallationScript(limaCfg, true)
 	}
 
 	return limaCfg, nil
 }
 
-func addUserModeEmulationInstallationScript(limaCfg *limayaml.LimaYAML) *limayaml.LimaYAML {
-	_, hasScript := hasUserModeEmulationInstallationScript(limaCfg)
-	if !hasScript {
+func toggleUserModeEmulationInstallationScript(limaCfg *limayaml.LimaYAML, enabled bool) {
+	idx, hasScript := hasUserModeEmulationInstallationScript(limaCfg)
+	if !hasScript && enabled {
 		limaCfg.Provision = append(limaCfg.Provision, limayaml.Provision{
 			Mode: "system",
 			Script: fmt.Sprintf(`%s
 #!/bin/bash
 dnf install -y --setopt=install_weak_deps=False qemu-user-static-aarch64 qemu-user-static-arm qemu-user-static-x86
 `, USER_MODE_EMULATION_INSTALLATION_SCRIPT_HEADER)})
+	} else if hasScript && !enabled {
+		if len(limaCfg.Provision) > 0 {
+			limaCfg.Provision = append(limaCfg.Provision[:idx], limaCfg.Provision[idx+1:]...)
+		}
 	}
-	return limaCfg
 }
 
-func hasUserModeEmulationInstallationScript(limaCfg *limayaml.LimaYAML) (*int, bool) {
+func hasUserModeEmulationInstallationScript(limaCfg *limayaml.LimaYAML) (int, bool) {
 	hasCrossArchToolInstallationScript := false
-	var scriptIdx *int
+	var scriptIdx int
 	for idx, prov := range limaCfg.Provision {
 		trimmed := strings.Trim(prov.Script, " ")
 		if !hasCrossArchToolInstallationScript && strings.HasPrefix(trimmed, USER_MODE_EMULATION_INSTALLATION_SCRIPT_HEADER) {
 			hasCrossArchToolInstallationScript = true
-			scriptIdx = &idx
+			scriptIdx = idx
 		}
 	}
 
 	return scriptIdx, hasCrossArchToolInstallationScript
 }
 
-func hasFinchSharedNetwork(limaCfg *limayaml.LimaYAML) (*int, bool) {
-	hasFinchSharedNetowrkItem := false
-	var netIdx *int
-	for idx, net := range limaCfg.Networks {
-		if !hasFinchSharedNetowrkItem && net.Lima == "finch-shared" {
-			hasFinchSharedNetowrkItem = true
-			netIdx = &idx
-		}
-	}
-
-	return netIdx, hasFinchSharedNetowrkItem
-}
-
-func (lca *limaConfigApplier) supportsVirtualizationFramework() (*bool, error) {
+func (lca *limaConfigApplier) supportsVirtualizationFramework() (bool, error) {
 	cmd := lca.cmdCreator.Create("sw_vers", "-productVersion")
 	out, err := cmd.Output()
 	if err != nil {
-		return nil, fmt.Errorf("failed to run sw_vers command: %w", err)
+		return false, fmt.Errorf("failed to run sw_vers command: %w", err)
 	}
 
 	splitVer := strings.Split(string(out), ".")
 	if len(splitVer) <= 0 {
-		return nil, fmt.Errorf("unexpected result from string split: %v", splitVer)
+		return false, fmt.Errorf("unexpected result from string split: %v", splitVer)
 	}
 
 	majorVersionInt, err := strconv.ParseInt(splitVer[0], 10, 64)
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse split sw_vers output (%s) into int: %w", splitVer[0], err)
+		return false, fmt.Errorf("failed to parse split sw_vers output (%s) into int: %w", splitVer[0], err)
 	}
 
 	if majorVersionInt >= 11 {
-		return pointer.Bool(true), nil
+		return true, nil
 	}
 
-	return pointer.Bool(false), nil
+	return false, nil
 }

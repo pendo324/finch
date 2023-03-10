@@ -120,7 +120,7 @@ func virtualMachineCommands(
 		config.NewNerdctlApplier(fssh.NewDialer(), fs, fp.LimaSSHPrivateKeyPath(), system.NewStdLib()),
 		fp,
 		fs,
-		disk.NewUserDataDiskManager(lcc, &afero.OsFs{}, fp, system.NewStdLib().Env("HOME")),
+		disk.NewUserDataDiskManager(lcc, ecc, &afero.OsFs{}, fp, system.NewStdLib().Env("HOME"), fc),
 	)
 }
 

@@ -71,7 +71,7 @@ func TestInitVMAction_runAdapter(t *testing.T) {
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "")
 
 				command := mocks.NewCommand(ctrl)
-				lca.EXPECT().Apply(true, false).Return(nil)
+				lca.EXPECT().Apply(true).Return(nil)
 				dm.EXPECT().EnsureUserDataDisk().Return(nil)
 				lcc.EXPECT().CreateWithoutStdio("start", fmt.Sprintf("--name=%s", limaInstanceName),
 					mockBaseYamlFilePath, "--tty=false").Return(command)
@@ -135,7 +135,7 @@ func TestInitVMAction_run(t *testing.T) {
 				getVMStatusC.EXPECT().Output().Return([]byte(""), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "")
 
-				lca.EXPECT().Apply(true, false).Return(nil)
+				lca.EXPECT().Apply(true).Return(nil)
 				dm.EXPECT().EnsureUserDataDisk().Return(nil)
 
 				command := mocks.NewCommand(ctrl)
@@ -253,7 +253,7 @@ func TestInitVMAction_run(t *testing.T) {
 				getVMStatusC.EXPECT().Output().Return([]byte(""), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "")
 
-				lca.EXPECT().Apply(true, false).Return(errors.New("load config fails"))
+				lca.EXPECT().Apply(true).Return(errors.New("load config fails"))
 				logger.EXPECT().Errorf("Dependency error: %v", fmt.Errorf("failed to install dependencies: %v",
 					[]error{fmt.Errorf("%s: %v", "mock_error_msg", []error{errors.New("dependency error occurs")})},
 				))
@@ -277,7 +277,7 @@ func TestInitVMAction_run(t *testing.T) {
 				getVMStatusC.EXPECT().Output().Return([]byte(""), nil)
 				logger.EXPECT().Debugf("Status of virtual machine: %s", "")
 
-				lca.EXPECT().Apply(true, false).Return(nil)
+				lca.EXPECT().Apply(true).Return(nil)
 				dm.EXPECT().EnsureUserDataDisk().Return(nil)
 
 				logs := []byte("stdout + stderr")

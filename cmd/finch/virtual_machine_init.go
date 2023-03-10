@@ -81,7 +81,7 @@ func (iva *initVMAction) run() error {
 		iva.logger.Errorf("Dependency error: %v", err)
 	}
 
-	err = iva.limaConfigApplier.Apply(true, err == nil)
+	err = iva.limaConfigApplier.Apply(true)
 	if err != nil {
 		return err
 	}
