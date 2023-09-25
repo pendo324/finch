@@ -128,3 +128,17 @@ func (mr *CommandMockRecorder) SetStdout(arg0 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SetStdout", reflect.TypeOf((*Command)(nil).SetStdout), arg0)
 }
+
+// String mocks base method.
+func (m *Command) String() string {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "String")
+	ret0, _ := ret[0].(string)
+	return ret0
+}
+
+// String indicates an expected call of String.
+func (mr *CommandMockRecorder) String() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "String", reflect.TypeOf((*Command)(nil).String))
+}

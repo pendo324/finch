@@ -24,9 +24,12 @@ type Command interface {
 	SetStdin(io.Reader)
 	SetStdout(io.Writer)
 	SetStderr(io.Writer)
+	StdinPipe() (io.WriteCloser, error)
 
 	Run() error
+	Start() error
 	String() string
+	Wait() error
 	Output() ([]byte, error)
 	CombinedOutput() ([]byte, error)
 }
