@@ -79,10 +79,18 @@ var (
 	procShellExecuteEx = modshell32.NewProc("ShellExecuteExW")
 )
 
-// RunElevated allows a new process with Administrator access to be started. It constructs a command starting
+func NewElevatedCommand() *elevatedCommand {
+	return &elevatedCommand{}
+}
+
+type elevatedCommand struct{}
+
+var _ ElevatedCommand = (*elevatedCommand)(nil)
+
+// Run allows a new process with Administrator access to be started. It constructs a command starting
 // in the form of `cmd /C "<program binary> <args...>"`. This allows output piping and other common cmd.exe
 // conventions to work. All path arguments passed into this function, through any of the parameters, should be quoted or escaped.
-func RunElevated(exePath, wd string, args []string) error {
+func (_ *elevatedCommand) Run(exePath, wd string, args []string) error {
 	// runas designates that the process will be launched as Administrator
 	verb := "runas"
 	cmdPath := `C:\Windows\System32\cmd.exe`
@@ -110,13 +118,13 @@ func RunElevated(exePath, wd string, args []string) error {
 		return fmt.Errorf("failed to convert %q to UTF16Ptr: %w", cmdArgs, err)
 	}
 
-	return ShellExecuteAndWait(0, verbPtr, exePtr, argPtr, wdPtr, windows.SW_HIDE)
+	return shellExecuteAndWait(0, verbPtr, exePtr, argPtr, wdPtr, windows.SW_HIDE)
 }
 
 // ShellExecuteAndWait is identical to https://pkg.go.dev/golang.org/x/sys/windows#ShellExecute,
 // except it customizes the SEE_MASK_NOCLOSEPROCESS fMask to allow the caller to wait for
 // execution to terminate.
-func ShellExecuteAndWait(hwnd HWND, verb, exe, args, wd LPCWSTR, nShowCmd int32) error {
+func shellExecuteAndWait(hwnd HWND, verb, exe, args, wd LPCWSTR, nShowCmd int32) error {
 	i := &SHELLEXECUTEINFOW{
 		fMask:        SEE_MASK_NOCLOSEPROCESS,
 		hwnd:         hwnd,

@@ -13,6 +13,7 @@ import (
 	"github.com/runfinch/finch/pkg/dependency"
 	"github.com/runfinch/finch/pkg/dependency/credhelper"
 	"github.com/runfinch/finch/pkg/dependency/vmnet"
+	"github.com/runfinch/finch/pkg/disk"
 	"github.com/runfinch/finch/pkg/flog"
 	"github.com/runfinch/finch/pkg/path"
 	"github.com/runfinch/finch/pkg/system"
@@ -39,4 +40,24 @@ func dependencies(
 		),
 		vmnet.NewDependencyGroup(ecc, lcc, fs, fp, logger),
 	}
+}
+
+func dataDiskManager(
+	lcc command.LimaCmdCreator,
+	ecc *command.ExecCmdCreator,
+	fp path.Finch,
+	finchRootPath string,
+	fc *config.Finch,
+	logger flog.Logger,
+) disk.UserDataDiskManager {
+	return disk.NewUserDataDiskManager(
+		lcc,
+		ecc,
+		&afero.OsFs{},
+		fp,
+		finchRootPath,
+		fc,
+		logger,
+		nil,
+	)
 }

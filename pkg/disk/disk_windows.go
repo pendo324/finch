@@ -17,9 +17,35 @@ import (
 
 	"github.com/spf13/afero"
 
+	"github.com/runfinch/finch/pkg/command"
+	"github.com/runfinch/finch/pkg/config"
 	"github.com/runfinch/finch/pkg/flog"
+	fpath "github.com/runfinch/finch/pkg/path"
 	"github.com/runfinch/finch/pkg/winutil"
 )
+
+// NewUserDataDiskManager is a constructor for UserDataDiskManager.
+func NewUserDataDiskManager(
+	lcc command.LimaCmdCreator,
+	ecc command.Creator,
+	fs diskFS,
+	finch fpath.Finch,
+	rootDir string,
+	config *config.Finch,
+	logger flog.Logger,
+	ec winutil.ElevatedCommand,
+) UserDataDiskManager {
+	return &userDataDiskManager{
+		lcc:     lcc,
+		ecc:     ecc,
+		fs:      fs,
+		finch:   finch,
+		rootDir: rootDir,
+		config:  config,
+		logger:  logger,
+		ec:      ec,
+	}
+}
 
 // EnsureUserDataDisk checks the current disk configuration and fixes it if needed.
 func (m *userDataDiskManager) EnsureUserDataDisk() error {
@@ -89,7 +115,7 @@ func (m *userDataDiskManager) createDisk(diskPath string) error {
 
 	_ = tempOut.Close()
 
-	if err := winutil.RunElevated(
+	if err := m.ec.Run(
 		dpgoPath,
 		wdPathQuoted,
 		[]string{

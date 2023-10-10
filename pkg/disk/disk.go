@@ -14,6 +14,7 @@ import (
 	"github.com/runfinch/finch/pkg/config"
 	"github.com/runfinch/finch/pkg/flog"
 	fpath "github.com/runfinch/finch/pkg/path"
+	"github.com/runfinch/finch/pkg/winutil"
 )
 
 const diskSizeStr = "50GB"
@@ -39,27 +40,7 @@ type userDataDiskManager struct {
 	rootDir string
 	config  *config.Finch
 	logger  flog.Logger
-}
-
-// NewUserDataDiskManager is a constructor for UserDataDiskManager.
-func NewUserDataDiskManager(
-	lcc command.LimaCmdCreator,
-	ecc command.Creator,
-	fs diskFS,
-	finch fpath.Finch,
-	rootDir string,
-	config *config.Finch,
-	logger flog.Logger,
-) UserDataDiskManager {
-	return &userDataDiskManager{
-		lcc:     lcc,
-		ecc:     ecc,
-		fs:      fs,
-		finch:   finch,
-		rootDir: rootDir,
-		config:  config,
-		logger:  logger,
-	}
+	ec      winutil.ElevatedCommand
 }
 
 func diskSize() (int64, error) {

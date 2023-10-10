@@ -15,6 +15,10 @@ import (
 
 	"github.com/docker/go-units"
 	limaStore "github.com/lima-vm/lima/pkg/store"
+	"github.com/runfinch/finch/pkg/command"
+	"github.com/runfinch/finch/pkg/config"
+	"github.com/runfinch/finch/pkg/flog"
+	fpath "github.com/runfinch/finch/pkg/path"
 )
 
 const (
@@ -28,6 +32,27 @@ type qemuDiskInfo struct {
 	Format      string `json:"format"`
 	ActualSize  int    `json:"actual-size"`
 	DirtyFlag   bool   `json:"dirty-flag"`
+}
+
+// NewUserDataDiskManager is a constructor for UserDataDiskManager.
+func NewUserDataDiskManager(
+	lcc command.LimaCmdCreator,
+	ecc command.Creator,
+	fs diskFS,
+	finch fpath.Finch,
+	rootDir string,
+	config *config.Finch,
+	logger flog.Logger,
+) UserDataDiskManager {
+	return &userDataDiskManager{
+		lcc:     lcc,
+		ecc:     ecc,
+		fs:      fs,
+		finch:   finch,
+		rootDir: rootDir,
+		config:  config,
+		logger:  logger,
+	}
 }
 
 // EnsureUserDataDisk checks the current disk configuration and fixes it if needed.

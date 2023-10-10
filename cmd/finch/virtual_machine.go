@@ -121,6 +121,6 @@ func virtualMachineCommands(
 		),
 		fp,
 		fs,
-		disk.NewUserDataDiskManager(lcc, ecc, &afero.OsFs{}, fp, finchRootPath, fc, logger),
+		dataDiskManager(lcc, ecc, fp, finchRootPath, fc, logger),
 	)
 }
