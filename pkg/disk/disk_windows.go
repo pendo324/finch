@@ -11,7 +11,6 @@ import (
 	"errors"
 	"fmt"
 	"io/fs"
-	"os"
 	"path/filepath"
 	"strings"
 
@@ -34,6 +33,7 @@ func NewUserDataDiskManager(
 	config *config.Finch,
 	logger flog.Logger,
 	ec winutil.ElevatedCommand,
+	sd UserDataDiskManagerSystemDeps,
 ) UserDataDiskManager {
 	return &userDataDiskManager{
 		lcc:     lcc,
@@ -44,6 +44,7 @@ func NewUserDataDiskManager(
 		config:  config,
 		logger:  logger,
 		ec:      ec,
+		sd:      sd,
 	}
 }
 
@@ -100,7 +101,7 @@ func (m *userDataDiskManager) createDisk(diskPath string) error {
 
 	m.logger.Infof("creating disk at path: %s", diskPath)
 
-	execPath, err := os.Executable()
+	execPath, err := m.sd.Executable()
 	if err != nil {
 		return fmt.Errorf("failed to get executable path: %w", err)
 	}

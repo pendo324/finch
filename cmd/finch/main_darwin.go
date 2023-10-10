@@ -58,6 +58,5 @@ func dataDiskManager(
 		finchRootPath,
 		fc,
 		logger,
-		nil,
 	)
 }

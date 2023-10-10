@@ -52,6 +52,7 @@ func NewUserDataDiskManager(
 		rootDir: rootDir,
 		config:  config,
 		logger:  logger,
+		sd:      nil,
 	}
 }
 

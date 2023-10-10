@@ -60,5 +60,6 @@ func dataDiskManager(
 		fc,
 		logger,
 		winutil.NewElevatedCommand(),
+		system.NewStdLib(),
 	)
 }

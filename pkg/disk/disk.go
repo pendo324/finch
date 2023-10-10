@@ -14,6 +14,7 @@ import (
 	"github.com/runfinch/finch/pkg/config"
 	"github.com/runfinch/finch/pkg/flog"
 	fpath "github.com/runfinch/finch/pkg/path"
+	"github.com/runfinch/finch/pkg/system"
 	"github.com/runfinch/finch/pkg/winutil"
 )
 
@@ -23,6 +24,13 @@ const diskSizeStr = "50GB"
 type UserDataDiskManager interface {
 	EnsureUserDataDisk() error
 	DetachUserDataDisk() error
+}
+
+// UserDataDiskManagerSystemDeps contains the system dependencies for UserDataDiskManager.
+//
+//go:generate mockgen -copyright_file=../../copyright_header -destination=../../pkg/mocks/disk_system_deps.go -package=mocks -mock_names UserDataDiskManagerSystemDeps=UserDataDiskManagerSystemDeps . UserDataDiskManagerSystemDeps
+type UserDataDiskManagerSystemDeps interface {
+	system.ExecutableFinder
 }
 
 // fs functions required for setting up the user data disk.
@@ -41,6 +49,7 @@ type userDataDiskManager struct {
 	config  *config.Finch
 	logger  flog.Logger
 	ec      winutil.ElevatedCommand
+	sd      UserDataDiskManagerSystemDeps
 }
 
 func diskSize() (int64, error) {

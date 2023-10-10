@@ -67,6 +67,44 @@ func (mr *UserDataDiskManagerMockRecorder) EnsureUserDataDisk() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "EnsureUserDataDisk", reflect.TypeOf((*UserDataDiskManager)(nil).EnsureUserDataDisk))
 }
 
+// UserDataDiskManagerSystemDeps is a mock of UserDataDiskManagerSystemDeps interface.
+type UserDataDiskManagerSystemDeps struct {
+	ctrl     *gomock.Controller
+	recorder *UserDataDiskManagerSystemDepsMockRecorder
+}
+
+// UserDataDiskManagerSystemDepsMockRecorder is the mock recorder for UserDataDiskManagerSystemDeps.
+type UserDataDiskManagerSystemDepsMockRecorder struct {
+	mock *UserDataDiskManagerSystemDeps
+}
+
+// NewUserDataDiskManagerSystemDeps creates a new mock instance.
+func NewUserDataDiskManagerSystemDeps(ctrl *gomock.Controller) *UserDataDiskManagerSystemDeps {
+	mock := &UserDataDiskManagerSystemDeps{ctrl: ctrl}
+	mock.recorder = &UserDataDiskManagerSystemDepsMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *UserDataDiskManagerSystemDeps) EXPECT() *UserDataDiskManagerSystemDepsMockRecorder {
+	return m.recorder
+}
+
+// Executable mocks base method.
+func (m *UserDataDiskManagerSystemDeps) Executable() (string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Executable")
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Executable indicates an expected call of Executable.
+func (mr *UserDataDiskManagerSystemDepsMockRecorder) Executable() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Executable", reflect.TypeOf((*UserDataDiskManagerSystemDeps)(nil).Executable))
+}
+
 // MockdiskFS is a mock of diskFS interface.
 type MockdiskFS struct {
 	ctrl     *gomock.Controller
