@@ -38,11 +38,6 @@
             "hidden": true
         },
         {
-            "type": "chore",
-            "section": "Miscellaneous Chores",
-            "hidden": true
-        },
-        {
             "type": "refactor",
             "section": "Code Refactoring",
             "hidden": true
