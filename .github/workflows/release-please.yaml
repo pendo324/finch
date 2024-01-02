@@ -1,5 +1,6 @@
 # When a third-party action is added (i.e., `uses`), please also add it to `download-licenses` in Makefile.
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
