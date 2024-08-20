@@ -1,0 +1,107 @@
+name: Upload build to s3
+
+on:
+  workflow_dispatch:
+env:
+  GO111MODULE: on
+
+permissions:
+  # This is required for configure-aws-credentials to request an OIDC JWT ID token to access AWS resources later on.
+  # More info: https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-openid-connect#adding-permissions-settings
+  id-token: write
+  contents: read    # This is required for actions/checkout
+
+jobs:
+  macos-aarch64-build:
+    runs-on: [self-hosted, macos, arm64, 14, release]
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+          submodules: true
+      - uses: actions/setup-go@0a12ed9d6a96ab950c8f026ed9f722fe0da7ef32 # v5.0.2
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: Make macos aarch64 build
+        run: |
+          brew install lz4 automake autoconf libtool yq
+          make clean
+          make download-licenses 
+          make FINCH_OS_IMAGE_LOCATION_ROOT=/Applications/Finch
+          tar -zcvf finch.${GITHUB_REF_NAME}.aarch64.tar.gz _output
+        shell: zsh {0}
+
+      - name: Upload macos aarch64 build
+        uses: actions/upload-artifact@0b2256b8c012f0828dc542b3febcab082c67f72b # v4.3.4
+        with:
+          name: finch.macos-aarch64
+          path: finch.*.aarch64.tar.gz
+          if-no-files-found: error
+
+  macos-x86_64-build:
+    runs-on: [self-hosted, macos, amd64, 14, release]
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+          submodules: true
+      - uses: actions/setup-go@0a12ed9d6a96ab950c8f026ed9f722fe0da7ef32 # v5.0.2
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: Make macos x86_64 build
+        run: |
+          brew install lz4 automake autoconf libtool yq
+          make clean
+          make download-licenses 
+          make FINCH_OS_IMAGE_LOCATION_ROOT=/Applications/Finch
+          tar -zcvf finch.${GITHUB_REF_NAME}.x86_64.tar.gz _output
+        shell: zsh {0}
+
+      - name: Upload macos x86_64 build
+        uses: actions/upload-artifact@0b2256b8c012f0828dc542b3febcab082c67f72b # v4.3.4
+        with:
+          name: finch.macos-x86_64
+          path: finch.*.x86_64.tar.gz
+          if-no-files-found: error
+
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs:
+      - macos-x86_64-build
+      - macos-aarch64-build
+    steps:
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: configure aws credentials
+        uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
+        with:
+          role-to-assume: ${{ secrets.ROLE }}
+          role-session-name: dependency-upload-session
+          aws-region: ${{ secrets.REGION }}
+
+      - name: Download macos aarch64 build
+        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
+        with:
+          name: finch.macos-aarch64
+          path: build
+
+      - name: Download macos x86_64 build
+        uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
+        with:
+          name: finch.macos-x86_64
+          path: build
+      # TODO: Change destination bucket after creating automation for signing.
+      - name: "Upload to S3"
+        run: |
+          aws s3 cp ./build/ s3://${{ secrets.DEPENDENCY_BUCKET_NAME }}/aarch64/ --recursive --exclude "*" --include "finch.${GITHUB_REF_NAME}.aarch64.tar.gz"
+          aws s3 cp ./build/ s3://${{ secrets.DEPENDENCY_BUCKET_NAME }}/x86-64/ --recursive --exclude "*" --include "finch.${GITHUB_REF_NAME}.x86_64.tar.gz"
