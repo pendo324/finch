@@ -15,6 +15,7 @@ on:
       - 'contrib/packaging/**'
       - '!contrib/hello-finch/**'
       - '!.github/CODEOWNERS'
+  workflow_dispatch:
 permissions:
   id-token: write
   contents: write
