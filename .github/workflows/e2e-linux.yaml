@@ -47,9 +47,9 @@ jobs:
       - name: Check repo out manually
         if: ${{ (startsWith(inputs.os, 'amazon') && inputs.version == '2' ) }}
         run: |
-          curl -L -o finch.tar.gz https://github.com/${GITHUB_REPOSITORY}/archive/${GITHUB_SHA}.tar.gz
-          tar --strip-components=1 -xvf finch.tar.gz
-          rm -rf finch.tar.gz
+          git clone https://github.com/${GITHUB_REPOSITORY}.git .
+          git fetch --all
+          git checkout ${GITHUB_SHA}
       - name: Set output variables
         id: vars
         run: |
@@ -74,7 +74,7 @@ jobs:
         run: |
           ./contrib/packaging/rpm/build.sh --local
       - name: Install Finch
-        run: sudo rpm -i ./_output/$(ls -t runfinch-finch* | head -1)
+        run: sudo rpm -i ./_output/$(ls -t ./_output/runfinch-finch* | head -1)
       - run: |
           git status
           git clean -f -d
