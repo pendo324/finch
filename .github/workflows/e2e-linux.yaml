@@ -74,8 +74,8 @@ jobs:
         run: |
           ./contrib/packaging/rpm/build.sh --local
       - name: Install Finch
-        run: sudo rpm -i ./_output/runfinch-finch*
+        run: sudo rpm -i ./_output/$(ls -t runfinch-finch* | head -1)
       - run: |
           git status
           git clean -f -d
-          REGISTRY=${{ steps.vars.outputs.has_creds == true && env.REGISTRY || '' }} make ${{ matrix.test-command }}
+          INSTALLED=true REGISTRY=${{ steps.vars.outputs.has_creds == true && env.REGISTRY || '' }} make ${{ matrix.test-command }}
