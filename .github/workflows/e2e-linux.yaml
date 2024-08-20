@@ -69,7 +69,7 @@ jobs:
         run: |
           ./contrib/packaging/rpm/build.sh --local
       - name: Install Finch
-          sudo rpm -i ./_output/runfinch-finch*
+        run: sudo rpm -i ./_output/runfinch-finch*
       - run: |
           git status
           git clean -f -d
