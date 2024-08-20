@@ -71,6 +71,10 @@ jobs:
           sudo rm -rf /var/containerd
           sudo rm -rf /var/soci-snapshotter
           sudo rm -rf ./_output
+      - name: Clean up repo AL2
+        if: ${{ (startsWith(inputs.os, 'amazon') && inputs.version == '2' ) }}
+        run: |
+          rm "${GITHUB_WORKSPACE}/finch"
       - name: Build project
         run: |
           ./contrib/packaging/rpm/build.sh --local
