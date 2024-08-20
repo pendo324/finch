@@ -10,8 +10,10 @@ on:
       - "contrib/**"
       - ".github/CODEOWNERS"
   pull_request:
-    paths:
-      - "**.sh"
+    paths-ignore:
+      - '**.md'
+      - 'contrib/run-finch/**'
+      - '.github/CODEOWNERS'
 
 permissions:
   id-token: write
