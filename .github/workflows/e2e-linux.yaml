@@ -47,7 +47,7 @@ jobs:
       - name: Check repo out manually
         if: ${{ (startsWith(inputs.os, 'amazon') && inputs.version == '2' ) }}
         run: |
-          git clone https://github.com/${GITHUB_REPOSITORY}.git .
+          git clone https://github.com/${GITHUB_REPOSITORY}.git
           git fetch --all
           git checkout ${GITHUB_SHA}
       - name: Set output variables
