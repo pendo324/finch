@@ -175,6 +175,7 @@ jobs:
       matrix:
         arch: ["amd64"]
         os: ["amazonlinux"]
+        version: ["2023", "2"]
         runner-type: ["test"]
         test-command: ["test-e2e-container"]
     uses: ./.github/workflows/e2e-linux.yaml
