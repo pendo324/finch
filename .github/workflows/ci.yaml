@@ -148,7 +148,7 @@ jobs:
         version: ["13", "14"]
         runner-type: ["test"]
         test-command: ["test-e2e-vm-serial", "test-e2e-container"]
-    uses: ./.github/workflows/e2e/macos.yaml
+    uses: ./.github/workflows/e2e-macos.yaml
     secrets: inherit
     with:
       arch: ${{ matrix.arch }}
@@ -162,7 +162,7 @@ jobs:
         arch: ["amd64"]
         runner-type: ["test"]
         test-command: ["test-e2e-vm-serial", "test-e2e-container"]
-    uses: ./.github/workflows/e2e/windows.yaml
+    uses: ./.github/workflows/e2e-windows.yaml
     secrets: inherit
     with:
       arch: ${{ matrix.arch }}
@@ -176,7 +176,7 @@ jobs:
         os: ["amazonlinux"]
         runner-type: ["test"]
         test-command: ["test-e2e-container"]
-    uses: ./.github/workflows/e2e/linux.yaml
+    uses: ./.github/workflows/e2e-linux.yaml
     secrets: inherit
     with:
       os: ${{ matrix.os }}
