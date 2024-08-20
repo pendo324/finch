@@ -105,7 +105,7 @@ find . -maxdepth 1 -type f \
 
 echo ${rpmbuild_opts[@]}
 
-rpmbuild -ba "${rpmbuild_opts[@]}" finch.spec
+rpmbuild -ba "${rpmbuild_opts[@]}" "${CURRENT_DIR}/finch.spec"
 
 # copy to output dir
 mkdir -p "${OUTPUT}"
