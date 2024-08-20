@@ -2,8 +2,19 @@
 # - When a job is added/removed/renamed, please make corresponding changes in ci-docs.yaml.
 name: CI
 on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - "**.md"
+      - "contrib/**"
+      - ".github/CODEOWNERS"
   pull_request:
-
+    paths:
+      - '!**.md'
+      - '*'
+      - '!contrib/hello-finch/**'
+      - '!.github/CODEOWNERS'
 permissions:
   id-token: write
   contents: write
