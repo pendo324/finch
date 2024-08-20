@@ -48,8 +48,8 @@ jobs:
         if: ${{ (startsWith(inputs.os, 'amazon') && inputs.version == '2' ) }}
         run: |
           curl -L -o finch.tar.gz https://github.com/${GITHUB_REPOSITORY}/archive/${GITHUB_SHA}.tar.gz
-          tar xvf finch.tar.gz
-          cd finch-${GITHUB_SHA}
+          tar --strip-components=1 -xvf finch.tar.gz
+          rm -rf finch.tar.gz
       - name: Set output variables
         id: vars
         run: |
