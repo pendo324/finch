@@ -29,20 +29,24 @@ func TestContainer(t *testing.T) {
 	}
 
 	ginkgo.SynchronizedBeforeSuite(func() []byte {
-		command.New(o, "vm", "stop", "-f").WithoutCheckingExitCode().WithTimeoutInSeconds(30).Run()
-		time.Sleep(1 * time.Second)
-		command.New(o, "vm", "remove", "-f").WithoutCheckingExitCode().WithTimeoutInSeconds(20).Run()
-		time.Sleep(1 * time.Second)
-		command.New(o, "vm", "init").WithoutCheckingExitCode().WithTimeoutInSeconds(160).Run()
+		if runtime.GOOS != "linux" {
+			command.New(o, "vm", "stop", "-f").WithoutCheckingExitCode().WithTimeoutInSeconds(30).Run()
+			time.Sleep(1 * time.Second)
+			command.New(o, "vm", "remove", "-f").WithoutCheckingExitCode().WithTimeoutInSeconds(20).Run()
+			time.Sleep(1 * time.Second)
+			command.New(o, "vm", "init").WithoutCheckingExitCode().WithTimeoutInSeconds(160).Run()
+		}
 		tests.SetupLocalRegistry(o)
 		return nil
 	}, func(_ []byte) {})
 
 	ginkgo.SynchronizedAfterSuite(func() {
-		command.New(o, "vm", "stop", "-f").WithoutCheckingExitCode().WithTimeoutInSeconds(30).Run()
-		time.Sleep(1 * time.Second)
-		command.New(o, "vm", "remove", "-f").WithoutCheckingExitCode().WithTimeoutInSeconds(20).Run()
-		time.Sleep(1 * time.Second)
+		if runtime.GOOS != "linux" {
+			command.New(o, "vm", "stop", "-f").WithoutCheckingExitCode().WithTimeoutInSeconds(30).Run()
+			time.Sleep(1 * time.Second)
+			command.New(o, "vm", "remove", "-f").WithoutCheckingExitCode().WithTimeoutInSeconds(20).Run()
+			time.Sleep(1 * time.Second)
+		}
 	}, func() {})
 
 	ginkgo.Describe(description, func() {
