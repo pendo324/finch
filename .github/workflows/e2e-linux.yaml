@@ -47,6 +47,7 @@ jobs:
       - name: Check repo out manually
         if: ${{ (startsWith(inputs.os, 'amazon') && inputs.version == '2' ) }}
         run: |
+          pwd
           git clone https://github.com/${GITHUB_REPOSITORY}.git
           git fetch --all
           git checkout ${GITHUB_SHA}
@@ -64,6 +65,7 @@ jobs:
           role-session-name: credhelper-test
           aws-region: ${{ secrets.REGION }}
       - name: Clean up previous files
+        if: always()
         run: |
           sudo rm -rf /etc/finch
           sudo rm -rf /var/finch
