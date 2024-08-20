@@ -10,11 +10,9 @@ on:
       - "contrib/**"
       - ".github/CODEOWNERS"
   pull_request:
-    types:
-      - opened
-      - edited
-      - reopened
-      - synchronize
+    paths:
+      - "**.sh"
+
 permissions:
   id-token: write
   contents: write
@@ -155,7 +153,6 @@ jobs:
       version: ${{ matrix.version }}
       runner-type: ${{ matrix.runner-type }}
       test-command: ${{ matrix.test-command }}
-
   windows-e2e-tests:
     strategy:
       fail-fast: false
