@@ -12,7 +12,7 @@ on:
   pull_request:
     paths-ignore:
       - '**.md'
-      - 'contrib/run-finch/**'
+      - 'contrib/hello-finch/**'
       - '.github/CODEOWNERS'
 
 permissions:

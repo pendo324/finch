@@ -19,7 +19,7 @@ on:
   pull_request:
     paths:
       - '**.md'
-      - 'contrib/run-finch/**'
+      - 'contrib/hello-finch/**'
       - '.github/CODEOWNERS'
 
 jobs:
