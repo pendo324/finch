@@ -37,15 +37,19 @@ jobs:
       ]
     steps:
       - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+        # checkout uses node version 20, which doesn't run on AL2
+        if: ${{ ! (startsWith(inputs.os, 'amazon') && inputs.version == '2' ) }}
         with:
           # We need to get all the git tags to make version injection work. See VERSION in Makefile for more detail.
           fetch-depth: 0
           persist-credentials: false
           submodules: recursive
-      - uses: actions/setup-go@0a12ed9d6a96ab950c8f026ed9f722fe0da7ef32 # v5.0.2
-        with:
-          go-version-file: go.mod
-          cache: true
+      - name: Check repo out manually
+        if: ${{ (startsWith(inputs.os, 'amazon') && inputs.version == '2' ) }}
+        run: |
+          curl -L -o finch.tar.gz https://github.com/${GITHUB_REPOSITORY}/archive/${GITHUB_SHA}.tar.gz
+          tar xvf finch.tar.gz
+          cd finch-${GITHUB_SHA}
       - name: Set output variables
         id: vars
         run: |
@@ -53,7 +57,8 @@ jobs:
           echo "has_creds=$has_creds" >> $GITHUB_OUTPUT
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@e3dd6a429d7300a6a4c196c26e071d42e0343502 # v4.0.2
-        if: ${{ steps.vars.outputs.has_creds == true }}
+        # this action requires node20, skip on AL2
+        if: ${{ steps.vars.outputs.has_creds == true && (!(startsWith(inputs.os, 'amazon') && inputs.version == '2' ))}}
         with:
           role-to-assume: ${{ secrets.ROLE }}
           role-session-name: credhelper-test
