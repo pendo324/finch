@@ -12,7 +12,8 @@ on:
   pull_request:
     paths:
       - '!**.md'
-      - '*'
+      - '**.go'
+      - 'contrib/packaging/**'
       - '!contrib/hello-finch/**'
       - '!.github/CODEOWNERS'
 permissions:
