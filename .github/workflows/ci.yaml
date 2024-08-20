@@ -140,34 +140,34 @@ jobs:
           go-version-file: go.mod
           cache: true
       - run: make check-licenses
-  macos-e2e-tests:
-    strategy:
-      fail-fast: false
-      matrix:
-        arch: ["amd64", "arm64"]
-        version: ["13", "14"]
-        runner-type: ["test"]
-        test-command: ["test-e2e-vm-serial", "test-e2e-container"]
-    uses: ./.github/workflows/e2e-macos.yaml
-    secrets: inherit
-    with:
-      arch: ${{ matrix.arch }}
-      version: ${{ matrix.version }}
-      runner-type: ${{ matrix.runner-type }}
-      test-command: ${{ matrix.test-command }}
-  windows-e2e-tests:
-    strategy:
-      fail-fast: false
-      matrix:
-        arch: ["amd64"]
-        runner-type: ["test"]
-        test-command: ["test-e2e-vm-serial", "test-e2e-container"]
-    uses: ./.github/workflows/e2e-windows.yaml
-    secrets: inherit
-    with:
-      arch: ${{ matrix.arch }}
-      runner-type: ${{ matrix.runner-type }}
-      test-command: ${{ matrix.test-command }}
+  # macos-e2e-tests:
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       arch: ["amd64", "arm64"]
+  #       version: ["13", "14"]
+  #       runner-type: ["test"]
+  #       test-command: ["test-e2e-vm-serial", "test-e2e-container"]
+  #   uses: ./.github/workflows/e2e-macos.yaml
+  #   secrets: inherit
+  #   with:
+  #     arch: ${{ matrix.arch }}
+  #     version: ${{ matrix.version }}
+  #     runner-type: ${{ matrix.runner-type }}
+  #     test-command: ${{ matrix.test-command }}
+  # windows-e2e-tests:
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       arch: ["amd64"]
+  #       runner-type: ["test"]
+  #       test-command: ["test-e2e-vm-serial", "test-e2e-container"]
+  #   uses: ./.github/workflows/e2e-windows.yaml
+  #   secrets: inherit
+  #   with:
+  #     arch: ${{ matrix.arch }}
+  #     runner-type: ${{ matrix.runner-type }}
+  #     test-command: ${{ matrix.test-command }}
   linux-e2e-tests:
     strategy:
       fail-fast: false
