@@ -11,7 +11,6 @@ on:
       - ".github/CODEOWNERS"
   pull_request:
     paths:
-      - '!**.md'
       - '**.go'
       - 'contrib/packaging/**'
       - '!contrib/hello-finch/**'
