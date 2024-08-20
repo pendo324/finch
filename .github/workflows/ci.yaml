@@ -10,12 +10,11 @@ on:
       - "contrib/**"
       - ".github/CODEOWNERS"
   pull_request:
-    branches:
-      - main
-    paths-ignore:
-      - "**.md"
-      - "contrib/**"
-      - ".github/CODEOWNERS"
+    types:
+      - opened
+      - edited
+      - reopened
+      - synchronize
 permissions:
   id-token: write
   contents: write
