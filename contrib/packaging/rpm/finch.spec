@@ -31,6 +31,13 @@
 %global soci_src soci-snapshotter-%{soci_commit}
 %global soci_rpm_version %(r=%soci_release; echo ${r%%%%-*})
 
+# cosign
+%global cosign_release 2.4.0
+%global cosign_commit b5e7dc123a272080f4af4554054797296271e902
+%global cosign_package github.com/sigstore/cosign
+%global cosign_src cosign-%{cosign_commit}
+%global cosign_rpm_version %(r=%cosign_release; echo ${r%%%%-*})
+
 Name: runfinch-finch
 Version: %{finch_rpm_version}
 Release: 1%{?dist}%{?_trivial}%{?_buildid}
@@ -62,6 +69,9 @@ Source1000: https://%{buildkit_package}/archive/%{buildkit_commit}/%{buildkit_sr
 
 # soci-snapshotter
 Source2000: https://%{soci_package}/archive/%{soci_commit}/%{soci_src}.tar.gz
+
+# cosign
+Source3000: https://%{cosign_package}/archive/%{cosign_commit}/%{cosign_src}.tar.gz
 
 # Runtime requirements
 Requires: containerd nerdctl cni-plugins
@@ -109,6 +119,8 @@ mv "finch-%{latest_branch}" "finch-%{finch_commit}"
 %setup -D -T -a 1000
 # extract soci
 %setup -D -T -a 2000
+# extract cosign
+%setup -D -T -a 3000
 
 %build
 
@@ -126,6 +138,11 @@ popd
 # build soci
 pushd "%{soci_src}"
 make
+popd
+
+# build cosign
+pushd "%{cosign_src}"
+GIT_VERSION="%{cosign_release}" GIT_HASH="%{cosign_commit}" make cosign
 popd
 
 %check
@@ -158,6 +175,9 @@ install -D -p %{soci_src}/out/soci-snapshotter-grpc %{buildroot}%{_libexecdir}/f
 install -D -p -m 0644 %{S:7} %{buildroot}%{_unitdir}/finch-soci.service
 install -D -p -m 0644 %{S:8} %{buildroot}%{_unitdir}/finch-soci.socket
 install -D -p -m 0644 %{S:9} %{buildroot}%{_sysconfdir}/finch/soci/soci-snapshotter-grpc.toml
+
+# install cosign
+install -D -p %{cosign_src}/cosign %{buildroot}%{_libexecdir}/finch/cosign
 
 %if 0%{?amzn} == 2
 # On a fresh install of container-selinux, or updating from selinux-policy in
@@ -207,6 +227,9 @@ fi
 %{_unitdir}/finch-soci.service
 %{_unitdir}/finch-soci.socket
 %{_sharedstatedir}/finch/soci
+
+# cosign
+%{_libexecdir}/finch/cosign
 
 %pre
 # Stop the agent before the upgrade
