@@ -64,7 +64,7 @@ Source1000: https://%{buildkit_package}/archive/%{buildkit_commit}/%{buildkit_sr
 Source2000: https://%{soci_package}/archive/%{soci_commit}/%{soci_src}.tar.gz
 
 # Runtime requirements
-Requires: containerd nerdctl cni-plugins finch-buildkit finch-soci-snapshotter
+Requires: containerd nerdctl cni-plugins
 
 # Compilation requirements
 BuildRequires: golang >= 1.22.3, git, make
