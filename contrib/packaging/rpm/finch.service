@@ -4,7 +4,7 @@ Documentation=https://runfinch.com
 After=network.target local-fs.target finch-buildkit.service
 
 [Service]
-ExecStart=true
+ExecStart=/usr/bin/true
 Type=oneshot
 
 [Install]
