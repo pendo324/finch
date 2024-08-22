@@ -5,12 +5,14 @@
 package container
 
 import (
+	"fmt"
 	"os/exec"
 	"regexp"
 	"runtime"
 	"testing"
 	"time"
 
+	ncdefaults "github.com/containerd/nerdctl/v2/pkg/defaults"
 	"github.com/onsi/ginkgo/v2"
 	"github.com/onsi/gomega"
 	"github.com/runfinch/common-tests/command"
@@ -53,7 +55,8 @@ func TestContainer(t *testing.T) {
 		tests.Pull(o)
 		tests.Rm(o)
 		tests.Rmi(o)
-		if runtime.GOOS == "windows" {
+		switch runtime.GOOS {
+		case "windows":
 			// get ip address for adapter vEthernet (WSL)
 			n, err := exec.Command("cmd", "/C", "netsh", "interface", "ipv4", "show",
 				"addresses", "vEthernet (WSL)").Output()
@@ -63,9 +66,13 @@ func TestContainer(t *testing.T) {
 			// containerd expects it at /sys/fs/cgroup based on
 			// https://github.com/containerd/cgroups/blob/cc78c6c1e32dc5bde018d92999910fdace3cfa27/utils.go#L36
 			tests.Run(&tests.RunOption{BaseOpt: o, CGMode: tests.Hybrid, DefaultHostGatewayIP: hostIP})
-		} else {
+		case "darwin":
 			tests.Run(&tests.RunOption{BaseOpt: o, CGMode: tests.Unified, DefaultHostGatewayIP: "192.168.5.2"})
+		default:
+			fmt.Printf("getCGroupMode(): %d\n", getCGroupMode())
+			tests.Run(&tests.RunOption{BaseOpt: o, CGMode: getCGroupMode(), DefaultHostGatewayIP: ncdefaults.HostGatewayIP()})
 		}
+
 		tests.Start(o)
 		tests.Stop(o)
 		tests.Cp(o)
