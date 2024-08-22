@@ -47,6 +47,8 @@ jobs:
       - name: Check repo out manually
         if: ${{ (startsWith(inputs.os, 'amazon') && inputs.version == '2' ) }}
         run: |
+          pwd
+          ls -lah
           git clone https://github.com/${GITHUB_REPOSITORY}.git .
           git config --add remote.origin.fetch "+refs/pull/*/head:refs/remotes/origin/prh/*"
           git config --add remote.origin.fetch "+refs/pull/*/merge:refs/remotes/origin/prm/*"
