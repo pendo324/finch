@@ -48,6 +48,7 @@ jobs:
         if: ${{ (startsWith(inputs.os, 'amazon') && inputs.version == '2' ) }}
         run: |
           pwd
+          echo "${GITHUB_WORKSPACE}"
           ls -lah
           git clone https://github.com/${GITHUB_REPOSITORY}.git .
           git config --add remote.origin.fetch "+refs/pull/*/head:refs/remotes/origin/prh/*"
@@ -87,4 +88,6 @@ jobs:
       - name: Clean up repo AL2
         if: ${{ (startsWith(inputs.os, 'amazon') && inputs.version == '2' && !cancelled() ) }}
         run: |
+          echo "${GITHUB_WORKSPACE}"
+          ls -lah "${GITHUB_WORKSPACE}"
           rm -rf "${GITHUB_WORKSPACE}"
