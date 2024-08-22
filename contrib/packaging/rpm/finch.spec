@@ -7,6 +7,12 @@
 %global _finch_release 1.2.3
 %global _finch_commit b84b424926d5f4e2d2abf0c51507856a73221e9d
 
+%if 0%{?amzn} == 2
+%global require_systemd_macros false
+%else
+%global require_systemd_macros true
+%endif
+
 # build_latst takes precendence because build_local is for debugging
 %if %{undefined build_latest} && %{undefined build_local}
 %global finch_release %{_finch_release}
@@ -78,7 +84,9 @@ Requires: containerd nerdctl cni-plugins
 
 # Compilation requirements
 BuildRequires: golang >= 1.22.3, git, make
+%if %{require_systemd_macros} == true
 BuildRequires: systemd-rpm-macros
+%endif
 
 %description
 Finch is an open source client for container development. Its simple
