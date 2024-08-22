@@ -73,10 +73,6 @@ jobs:
           sudo rm -rf /var/containerd
           sudo rm -rf /var/soci-snapshotter
           sudo rm -rf ./_output
-      - name: Clean up repo AL2
-        if: ${{ (startsWith(inputs.os, 'amazon') && inputs.version == '2' && !cancelled() ) }}
-        run: |
-          rm -rf "${GITHUB_WORKSPACE}"
       - name: Build project
         run: |
           ./contrib/packaging/rpm/build.sh --local
@@ -86,3 +82,7 @@ jobs:
           git status
           git clean -f -d
           INSTALLED=true REGISTRY=${{ steps.vars.outputs.has_creds == true && env.REGISTRY || '' }} make ${{ matrix.test-command }}
+      - name: Clean up repo AL2
+        if: ${{ (startsWith(inputs.os, 'amazon') && inputs.version == '2' && !cancelled() ) }}
+        run: |
+          rm -rf "${GITHUB_WORKSPACE}"
