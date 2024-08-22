@@ -84,7 +84,7 @@ Requires: containerd nerdctl cni-plugins
 
 # Compilation requirements
 BuildRequires: golang >= 1.22.3, git, make
-%if %{require_systemd_macros} == true
+%if %{require_systemd_macros}
 BuildRequires: systemd-rpm-macros
 %endif
 
