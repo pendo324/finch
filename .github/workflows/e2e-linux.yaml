@@ -48,7 +48,9 @@ jobs:
         if: ${{ (startsWith(inputs.os, 'amazon') && inputs.version == '2' ) }}
         run: |
           git clone https://github.com/${GITHUB_REPOSITORY}.git .
-          git fetch --all
+          git config --add remote.origin.fetch "+refs/pull/*/head:refs/remotes/origin/prh/*"
+          git config --add remote.origin.fetch "+refs/pull/*/merge:refs/remotes/origin/prm/*"
+          git fetch origin
           git checkout ${GITHUB_SHA}
       - name: Set output variables
         id: vars
@@ -72,7 +74,7 @@ jobs:
           sudo rm -rf /var/soci-snapshotter
           sudo rm -rf ./_output
       - name: Clean up repo AL2
-        if: ${{ (startsWith(inputs.os, 'amazon') && inputs.version == '2' ) }}
+        if: always() && ${{ (startsWith(inputs.os, 'amazon') && inputs.version == '2' ) }}
         run: |
           rm "${GITHUB_WORKSPACE}/finch"
       - name: Build project
