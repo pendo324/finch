@@ -77,7 +77,7 @@ jobs:
         run: |
           ./contrib/packaging/rpm/build.sh --local
       - name: Install Finch
-        run: sudo rpm -i ./_output/$(ls -t ./_output/packages/ | grep runfinch-finch | head -1)
+        run: sudo rpm -i ./_output/packages/$(ls -t ./_output/packages/ | grep runfinch-finch | head -1)
       - run: |
           git status
           git clean -f -d
