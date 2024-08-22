@@ -74,9 +74,9 @@ jobs:
           sudo rm -rf /var/soci-snapshotter
           sudo rm -rf ./_output
       - name: Clean up repo AL2
-        if: always() && ${{ (startsWith(inputs.os, 'amazon') && inputs.version == '2' ) }}
+        if: ${{ (startsWith(inputs.os, 'amazon') && inputs.version == '2' && !cancelled() ) }}
         run: |
-          rm "${GITHUB_WORKSPACE}/finch"
+          rm -rf "${GITHUB_WORKSPACE}"
       - name: Build project
         run: |
           ./contrib/packaging/rpm/build.sh --local
