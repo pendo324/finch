@@ -7,10 +7,8 @@
 %global _finch_release 1.2.3
 %global _finch_commit b84b424926d5f4e2d2abf0c51507856a73221e9d
 
-%if 0%{?amzn} == 2
-%global require_systemd_macros false
-%else
-%global require_systemd_macros true
+%if 0%{?amzn} > 2
+%global requires_systemd_macros false
 %endif
 
 # build_latst takes precendence because build_local is for debugging
@@ -84,7 +82,7 @@ Requires: containerd nerdctl cni-plugins
 
 # Compilation requirements
 BuildRequires: golang >= 1.22.3, git, make
-%if %{require_systemd_macros}
+%if %{defined requires_systemd_macros}
 BuildRequires: systemd-rpm-macros
 %endif
 
