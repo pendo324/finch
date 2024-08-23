@@ -186,7 +186,7 @@ install -D -p -m 0644 %{S:9} %{buildroot}%{_sysconfdir}/finch/soci/soci-snapshot
 # install cosign
 install -D -p %{cosign_src}/cosign %{buildroot}%{_libexecdir}/finch/cosign
 
-%if 0%{?amzn} > 2
+%if 0%{?amzn} == 2
 # nerdctl is not installed into the default PATH on AL2, so link it
 ln -sf /usr/local/bin/nerdctl %{buildroot}%{_libexecdir}/finch/nerdctl
 %endif
@@ -243,7 +243,7 @@ fi
 # cosign
 %{_libexecdir}/finch/cosign
 
-%if 0%{?amzn} > 2
+%if 0%{?amzn} == 2
 %{buildroot}%{_libexecdir}/finch/nerdctl
 %endif
 
