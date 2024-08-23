@@ -95,6 +95,8 @@ jobs:
         run: |
           git status
           git clean -f -d
+          # required by one of the tests which uses SSH_AUTH_SOCK
+          eval "$(ssh-agent -s)"
           INSTALLED=true REGISTRY=${{ steps.vars.outputs.has_creds == true && env.REGISTRY || '' }} sudo -E make ${{ inputs.test-command }}
       - name: Clean up repo AL2
         if: ${{ (startsWith(inputs.os, 'amazon') && inputs.version == '2' && always() ) }}
