@@ -84,7 +84,7 @@ jobs:
       - run: |
           git status
           git clean -f -d
-          INSTALLED=true REGISTRY=${{ steps.vars.outputs.has_creds == true && env.REGISTRY || '' }} make ${{ matrix.test-command }}
+          INSTALLED=true REGISTRY=${{ steps.vars.outputs.has_creds == true && env.REGISTRY || '' }} make ${{ inputs.test-command }}
       - name: Clean up repo AL2
         if: ${{ (startsWith(inputs.os, 'amazon') && inputs.version == '2' && !cancelled() ) }}
         run: |

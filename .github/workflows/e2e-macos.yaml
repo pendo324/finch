@@ -78,5 +78,5 @@ jobs:
       - run: |
           git status
           git clean -f -d
-          REGISTRY=${{ steps.vars.outputs.has_creds == true && env.REGISTRY || '' }} make ${{ matrix.test-command }}
+          REGISTRY=${{ steps.vars.outputs.has_creds == true && env.REGISTRY || '' }} make ${{ inputs.test-command }}
         shell: zsh {0}
