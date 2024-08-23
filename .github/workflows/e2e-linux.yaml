@@ -71,6 +71,7 @@ jobs:
       - name: Clean up previous files
         if: always()
         run: |
+          sudo sudo rpm -e runfinch-finch
           sudo rm -rf /etc/finch
           sudo rm -rf /var/finch
           sudo rm -rf /var/containerd
