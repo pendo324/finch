@@ -62,8 +62,8 @@ func (ncc *nerdctlCmdCreator) create(stdin io.Reader, stdout, stderr io.Writer, 
 	newPathEnv := replaceOrAppend(ncc.systemDeps.Environ(), EnvKeyPath, pathEnv)
 	newPathEnv = append(
 		newPathEnv,
-		fmt.Sprintf("%s=%s", EnvKeyNerdctlTOML, ncc.nerdctlConfigPath),
-		fmt.Sprintf("%s=%s", EnvKeyBuildkitHost, ncc.buildkitSocketPath),
+		fmt.Sprintf("NERDCTL_TOML=%s", ncc.nerdctlConfigPath),
+		fmt.Sprintf("BUILDKIT_HOST=unix://%s", ncc.buildkitSocketPath),
 	)
 
 	cmd.SetEnv(newPathEnv)
