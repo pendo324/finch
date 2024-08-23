@@ -58,6 +58,8 @@ func (ncc *nerdctlCmdCreator) create(stdin io.Reader, stdout, stderr io.Writer, 
 		fmt.Sprintf("BUILDKIT_HOST=unix://%s", ncc.buildkitSocketPath),
 	)
 
+	ncc.logger.Infof("NERDCTL CMD ENV: %v", env)
+
 	cmd.SetEnv(env)
 	cmd.SetStdin(stdin)
 	cmd.SetStdout(stdout)
