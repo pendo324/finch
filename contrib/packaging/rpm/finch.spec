@@ -82,7 +82,8 @@ Requires: containerd nerdctl cni-plugins
 
 # Compilation requirements
 BuildRequires: golang >= 1.22.3, git, make
-%if %{defined requires_systemd_macros}
+%if 0%{?amzn} > 2
+# this macro package doesn't exist on AL2
 BuildRequires: systemd-rpm-macros
 %endif
 
@@ -185,6 +186,11 @@ install -D -p -m 0644 %{S:9} %{buildroot}%{_sysconfdir}/finch/soci/soci-snapshot
 # install cosign
 install -D -p %{cosign_src}/cosign %{buildroot}%{_libexecdir}/finch/cosign
 
+%if 0%{?amzn} > 2
+# nerdctl is not installed into the default PATH on AL2, so link it
+ln -sf /usr/local/bin/nerdctl %{buildroot}%{_libexecdir}/finch/nerdctl
+%endif
+
 %if 0%{?amzn} == 2
 # On a fresh install of container-selinux, or updating from selinux-policy in
 # amzn2-core to one that more closely tracks upstream, we need to relabel critical
@@ -236,6 +242,10 @@ fi
 
 # cosign
 %{_libexecdir}/finch/cosign
+
+%if 0%{?amzn} > 2
+%{buildroot}%{_libexecdir}/finch/nerdctl
+%endif
 
 %pre
 # Stop the agent before the upgrade
