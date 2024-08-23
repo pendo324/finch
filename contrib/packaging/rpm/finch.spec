@@ -244,7 +244,7 @@ fi
 %{_libexecdir}/finch/cosign
 
 %if 0%{?amzn} == 2
-%{buildroot}%{_libexecdir}/finch/nerdctl
+%{_libexecdir}/finch/nerdctl
 %endif
 
 %pre
