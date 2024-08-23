@@ -71,10 +71,10 @@ jobs:
       - name: Clean up previous files
         if: always()
         run: |
-          sudo systemctl stop finch.service
-          sudo systemctl stop finch-buildkit.service
-          sudo systemctl stop finch-soci.service
-          sudo sudo rpm -e runfinch-finch
+          sudo systemctl stop finch.service || true
+          sudo systemctl stop finch-buildkit.service || true
+          sudo systemctl stop finch-soci.service || true
+          sudo sudo rpm -e runfinch-finch || true
           sudo systemctl daemon-reload
           sudo rm -rf /etc/finch
           sudo rm -rf /var/finch
