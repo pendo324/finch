@@ -8,6 +8,7 @@ package command
 import (
 	"fmt"
 	"io"
+	"path"
 
 	"github.com/runfinch/finch/pkg/flog"
 )
@@ -44,7 +45,8 @@ func NewNerdctlCmdCreator(
 
 func (ncc *nerdctlCmdCreator) create(stdin io.Reader, stdout, stderr io.Writer, args ...string) Command {
 	ncc.logger.Debugf("Creating nerdctl command: ARGUMENTS: %v", args)
-	cmd := ncc.cmdCreator.Create("nerdctl", args...)
+	nerdctlBinPath := path.Join(ncc.binPath, "nerdctl")
+	cmd := ncc.cmdCreator.Create(nerdctlBinPath, args...)
 
 	path := ncc.systemDeps.Env(envKeyPath)
 	path = fmt.Sprintf("%s:%s", ncc.binPath, path)
@@ -62,5 +64,6 @@ func (ncc *nerdctlCmdCreator) create(stdin io.Reader, stdout, stderr io.Writer, 
 	cmd.SetStdin(stdin)
 	cmd.SetStdout(stdout)
 	cmd.SetStderr(stderr)
+
 	return cmd
 }
