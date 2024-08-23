@@ -75,7 +75,8 @@ jobs:
           export PATH="/opt/homebrew/opt/libtool/libexec/gnubin:$PATH"
           make
         shell: zsh {0}
-      - run: |
+      - name: Run e2e tests
+        run: |
           git status
           git clean -f -d
           REGISTRY=${{ steps.vars.outputs.has_creds == true && env.REGISTRY || '' }} make ${{ inputs.test-command }}

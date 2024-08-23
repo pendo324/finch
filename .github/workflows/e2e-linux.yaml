@@ -91,7 +91,8 @@ jobs:
           sudo systemctl start finch.service
           sudo systemctl start finch-buildkit.service
           sudo systemctl start finch-soci.service
-      - run: |
+      - name: Run e2e tests
+        run: |
           git status
           git clean -f -d
           INSTALLED=true REGISTRY=${{ steps.vars.outputs.has_creds == true && env.REGISTRY || '' }} sudo -E make ${{ inputs.test-command }}
