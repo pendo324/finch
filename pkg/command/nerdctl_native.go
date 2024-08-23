@@ -68,7 +68,7 @@ func (ncc *nerdctlCmdCreator) create(stdin io.Reader, stdout, stderr io.Writer, 
 	cmdEnv := ncc.cmdCreator.Create("printenv")
 	cmdEnv.SetEnv(env)
 	out, _ := cmdEnv.CombinedOutput()
-	ncc.logger.Infof("printev: %v", out)
+	ncc.logger.Infof("printev: %v", string(out))
 
 	return cmd
 }
