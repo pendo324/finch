@@ -7,6 +7,7 @@ package command_test
 
 import (
 	"fmt"
+	"path"
 	"testing"
 
 	"github.com/golang/mock/gomock"
@@ -17,7 +18,7 @@ import (
 
 const (
 	mockNerdctlConfigPath  = "/etc/finch/nerdctl.toml"
-	mockBuildkitSocketPath = "/etc/finch/buildkit"
+	mockBuildkitSocketPath = "/var/lib/finch/buildkit/buildkitd.sock"
 	mockFinchBinPath       = "/usr/lib/usrexec/finch"
 	mockSystemPath         = "/usr/bin"
 	finalPath              = mockFinchBinPath + command.EnvKeyPathJoiner + mockSystemPath
@@ -38,7 +39,7 @@ func TestLimaCmdCreator_Create(t *testing.T) {
 			wantErr: nil,
 			mockSvc: func(logger *mocks.Logger, cmdCreator *mocks.CommandCreator, cmd *mocks.Command, lcd *mocks.NerdctlCmdCreatorSystemDeps) {
 				logger.EXPECT().Debugf("Creating nerdctl command: ARGUMENTS: %v", mockArgs)
-				cmdCreator.EXPECT().Create("nerdctl", mockArgs).Return(cmd)
+				cmdCreator.EXPECT().Create(path.Join(mockFinchBinPath, "nerdctl"), mockArgs).Return(cmd)
 				lcd.EXPECT().Env(command.EnvKeyPath).Return(mockSystemPath)
 				lcd.EXPECT().Environ().Return([]string{})
 				lcd.EXPECT().Stdin().Return(nil)
@@ -47,7 +48,7 @@ func TestLimaCmdCreator_Create(t *testing.T) {
 				cmd.EXPECT().SetEnv([]string{
 					fmt.Sprintf("%s=%s", command.EnvKeyPath, finalPath),
 					fmt.Sprintf("%s=%s", command.EnvKeyNerdctlTOML, mockNerdctlConfigPath),
-					fmt.Sprintf("%s=%s", command.EnvKeyBuildkitHost, mockBuildkitSocketPath),
+					fmt.Sprintf("%s=%s", command.EnvKeyBuildkitHost, "unix://"+mockBuildkitSocketPath),
 				})
 				cmd.EXPECT().SetStdin(nil)
 				cmd.EXPECT().SetStdout(nil)

@@ -16,40 +16,40 @@ var mockFinch = Finch("mock_finch")
 
 func TestFinch_NewFinchPath(t *testing.T) {
 	t.Parallel()
-	assert.Equal(t, string(NewFinchPath()), filepath.Join("/", "etc", "finch"))
+	assert.Equal(t, filepath.Join("/", "etc", "finch"), string(NewFinchPath()))
 }
 
 func TestFinch_FinchDir(t *testing.T) {
 	t.Parallel()
 
 	res := mockFinch.FinchDir()
-	assert.Equal(t, res, string(mockFinch))
+	assert.Equal(t, string(mockFinch), res)
 }
 
 func TestFinch_ConfigFilePath(t *testing.T) {
 	t.Parallel()
 
 	res := mockFinch.ConfigFilePath()
-	assert.Equal(t, res, filepath.Join("mock_finch", "finch.yaml"))
+	assert.Equal(t, filepath.Join("mock_finch", "finch.yaml"), res)
 }
 
 func TestFinch_NerdctlConfigFilePath(t *testing.T) {
 	t.Parallel()
 
 	res := mockFinch.NerdctlConfigFilePath()
-	assert.Equal(t, res, filepath.Join("mock_finch", "nerdctl", "nerdctl.toml"))
+	assert.Equal(t, filepath.Join("mock_finch", "nerdctl", "nerdctl.toml"), res)
 }
 
 func TestFinch_BuildkitSocketPath(t *testing.T) {
 	t.Parallel()
 
 	res := mockFinch.BuildkitSocketPath()
-	assert.Equal(t, res, filepath.Join("mock_finch", "buildkit", "buildkitd.toml"))
+	assert.Equal(t, filepath.Join("/", "var", "lib", "finch", "buildkit", "buildkitd.sock"), res)
 }
 
 func TestFinch_FinchDependencyBinDir(t *testing.T) {
 	t.Parallel()
 
 	res := mockFinch.FinchDependencyBinDir()
-	assert.Equal(t, res, filepath.Join("/", "usr", "libexec", "finch"))
+	assert.Equal(t, filepath.Join("/", "usr", "libexec", "finch"), res)
 }
