@@ -52,6 +52,7 @@ jobs:
         run: |
           echo "$PWD"
           chown -R ec2-user:staff ./../../
+          chmod g+s,u+s ./../../
           ls -lah ./../../
           cd ./../../ && echo "$PWD"
         shell: zsh {0}
