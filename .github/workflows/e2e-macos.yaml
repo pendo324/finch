@@ -66,15 +66,19 @@ jobs:
       - name: Set output variables
         id: vars
         run: |
-          ls -lah ./
-          echo "$PWD"
           has_creds=${{ (github.event_name == 'push' || github.repository == github.event.pull_request.head.repo.full_name) && github.actor != 'dependabot[bot]' }}
           echo "has_creds=false" >> $GITHUB_OUTPUT
+      - name: "debug (root)"
+        if: always()
+        run: |
+          echo "$PWD"
+          ls -lahe .
+        shell: zsh {0}
       - name: "debug"
         if: always()
         run: |
           echo "$PWD"
-          ls -lah ec2-user:staff ./../../_temp
+          ls -lahe .
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@4fc4975a852c8cd99761e2de1f4ba73402e44dd9 # v4.0.3
         if: ${{ steps.vars.outputs.has_creds == 'true' }}
