@@ -29,11 +29,7 @@ jobs:
   test:
     runs-on:
       [
-        "self-hosted",
-        "macos",
-        "${{ inputs.arch }}",
-        "${{ inputs.version }}",
-        "${{ inputs.runner-type }}",
+        "codebuild-FinchFork-CodeBuildRunners-${{ github.run_id }}-${{ github.run_attempt }}",
       ]
     timeout-minutes: 60
     outputs:
@@ -77,7 +73,7 @@ jobs:
           fi
       - name: Install Rosetta 2
         run: echo "A" | softwareupdate --install-rosetta || true
-      - run: brew install lz4 automake autoconf libtool yq
+      - run: brew install lz4 automake autoconf libtool yq jq
         shell: zsh {0}
       - name: Build project
         run: |
