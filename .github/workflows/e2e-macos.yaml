@@ -27,7 +27,7 @@ env:
 
 defaults:
   run:
-    shell: sudo -i -u ec2-user zsh -c "{0}"
+    shell: sudo -i -u ec2-user /bin/zsh -c "{0}"
 
 jobs:
   test:
@@ -71,6 +71,7 @@ jobs:
       - name: "debug (root)"
         if: always()
         run: |
+          echo $0
           echo "$PWD"
           ls -lahe .
         shell: zsh {0}
@@ -78,6 +79,7 @@ jobs:
         if: always()
         working-directory: "/"
         run: |
+          echo $0
           echo "$PWD"
           ls -lahe .
           cd /private
