@@ -52,11 +52,11 @@ jobs:
         run: |
           echo "$PWD"
           dseditgroup -o edit -a ec2-user -t user wheel
+          ls -lah ./../../../../../../../../
+          (cd ./../../../../../../../../ && echo "$PWD")
+          chown -R ec2-user:staff ./../../../../../../../../
+          chmod -R +a "ec2-user:staff allow list,add_file,search,add_subdirectory,delete_child,readattr,writeattr,readextattr,writeextattr,readsecurity,file_inherit,directory_inherit" ./../../../../../../../../
           ls -lah ./../../../../../../../../../
-          cd ./../../../../../../../../../ && echo "$PWD"
-          chown -R ec2-user:staff ./../../../
-          chmod -R +a "ec2-user:staff allow list,add_file,search,add_subdirectory,delete_child,readattr,writeattr,readextattr,writeextattr,readsecurity,file_inherit,directory_inherit" ./../../../
-          ls -lah ./../../../
           cd ./../../../ && echo "$PWD"
         shell: zsh {0}
       - uses: actions/setup-go@f111f3307d8850f501ac008e886eec1fd1932a34 # v5.3.0
