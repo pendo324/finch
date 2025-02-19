@@ -68,24 +68,6 @@ jobs:
         run: |
           has_creds=${{ (github.event_name == 'push' || github.repository == github.event.pull_request.head.repo.full_name) && github.actor != 'dependabot[bot]' }}
           echo "has_creds=false" >> $GITHUB_OUTPUT
-      # - name: "debug (root)"
-      #   if: always()
-      #   run: |
-      #     ls -lahe $0
-      #     echo "$PWD"
-      #     echo $USER
-      #   shell: zsh {0}
-      # - name: "debug"
-      #   if: always()
-      #   working-directory: "/"
-      #   run: |
-      #     echo $0
-      #     echo "$PWD"
-      #     ls -lahe .
-      #     cd /private
-      #     ls -lahe .
-      #     cd /private/tmp
-      #     ls -lahe .
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@4fc4975a852c8cd99761e2de1f4ba73402e44dd9 # v4.0.3
         if: ${{ steps.vars.outputs.has_creds == 'true' }}
@@ -115,6 +97,9 @@ jobs:
         run: |
           git status
           git clean -f -d
+          e2e_test_dir=$(mktemp -d 'finch-e2e.XXXXXXXXX')
+          cp -a . "${e2e_test_dir}"
+          cd "${e2e_test_dir}"
           REGISTRY=${{ steps.vars.outputs.has_creds == true && env.REGISTRY || '' }} make ${{ inputs.test-command }}
       - name: Set artifacts name outputs
         if: always()
