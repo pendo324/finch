@@ -76,8 +76,13 @@ jobs:
         shell: zsh {0}
       - name: "debug"
         if: always()
+        working-directory: "/"
         run: |
           echo "$PWD"
+          ls -lahe .
+          cd /private
+          ls -lahe .
+          cd /private/tmp
           ls -lahe .
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@4fc4975a852c8cd99761e2de1f4ba73402e44dd9 # v4.0.3
