@@ -76,8 +76,6 @@ jobs:
           ls -lahe $0
           echo "$PWD"
           echo $USER
-          sudo -i -u ec2-user /bin/zsh $0
-          exit
         shell: zsh {0}
       - name: "debug"
         if: always()
