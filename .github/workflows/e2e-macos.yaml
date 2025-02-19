@@ -27,8 +27,7 @@ env:
 
 defaults:
   run:
-    shell: zsh su - ec2-user -c "${0}"
-
+    shell: sudo -i -u ec2-user zsh -c {0}
 jobs:
   test:
     runs-on:
