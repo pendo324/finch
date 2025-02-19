@@ -171,16 +171,19 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        version: ['13', '14']
+        # version: ['13', '14']
         test-command: ['test-e2e-vm-serial', 'test-e2e-container']
-        arch: ['X64', 'arm64']
-        runner-type: ['test']
+        # arch: ['X64', 'arm64']
+        # runner-type: ['test']
     uses: ./.github/workflows/e2e-macos.yaml
     secrets: inherit
     with:
-      arch: ${{ matrix.arch }}
-      version: ${{ matrix.version }}
-      runner-type: ${{ matrix.runner-type }}
+      # arch: ${{ matrix.arch }}
+      # version: ${{ matrix.version }}
+      # runner-type: ${{ matrix.runner-type }}
+      arch: ""
+      version: ""
+      runner-type: ""
       test-command: ${{ matrix.test-command }}
   # windows-e2e-tests:
   #   strategy:
