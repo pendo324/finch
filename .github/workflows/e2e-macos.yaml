@@ -27,7 +27,7 @@ env:
 
 defaults:
   run:
-    shell: sudo -i -u ec2-user /bin/zsh {0}
+    shell: sudo -E -i -u ec2-user /bin/zsh {0}
 
 jobs:
   test:
@@ -70,24 +70,24 @@ jobs:
         run: |
           has_creds=${{ (github.event_name == 'push' || github.repository == github.event.pull_request.head.repo.full_name) && github.actor != 'dependabot[bot]' }}
           echo "has_creds=false" >> $GITHUB_OUTPUT
-      - name: "debug (root)"
-        if: always()
-        run: |
-          ls -lahe $0
-          echo "$PWD"
-          echo $USER
-        shell: zsh {0}
-      - name: "debug"
-        if: always()
-        working-directory: "/"
-        run: |
-          echo $0
-          echo "$PWD"
-          ls -lahe .
-          cd /private
-          ls -lahe .
-          cd /private/tmp
-          ls -lahe .
+      # - name: "debug (root)"
+      #   if: always()
+      #   run: |
+      #     ls -lahe $0
+      #     echo "$PWD"
+      #     echo $USER
+      #   shell: zsh {0}
+      # - name: "debug"
+      #   if: always()
+      #   working-directory: "/"
+      #   run: |
+      #     echo $0
+      #     echo "$PWD"
+      #     ls -lahe .
+      #     cd /private
+      #     ls -lahe .
+      #     cd /private/tmp
+      #     ls -lahe .
       - name: configure aws credentials
         uses: aws-actions/configure-aws-credentials@4fc4975a852c8cd99761e2de1f4ba73402e44dd9 # v4.0.3
         if: ${{ steps.vars.outputs.has_creds == 'true' }}
