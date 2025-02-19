@@ -54,7 +54,7 @@ jobs:
           dseditgroup -o edit -a ec2-user -t user wheel
           ls -lah ./../../../../../../../../
           chown -R ec2-user:staff ./../../../../../../../../
-          chmod -R +a "ec2-user:staff allow list,add_file,search,add_subdirectory,delete_child,readattr,writeattr,readextattr,writeextattr,readsecurity,file_inherit,directory_inherit" ./../../../../../../../../
+          chmod -R +a "ec2-user allow list,add_file,search,add_subdirectory,delete_child,readattr,writeattr,readextattr,writeextattr,readsecurity,file_inherit,directory_inherit" ./../../../../../../../../
           ls -lah ./../../../../../../../../../
           cd ./../../../ && echo "$PWD"
         shell: zsh {0}
