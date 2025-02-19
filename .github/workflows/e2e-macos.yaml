@@ -27,7 +27,8 @@ env:
 
 defaults:
   run:
-    shell: sudo -E -i -u ec2-user /bin/zsh {0}
+    #shell: sudo -E -i -u ec2-user /bin/zsh {0}
+    shell: sudo -E su -p - ec2-user -c /bin/zsh {0}
 
 jobs:
   test:
