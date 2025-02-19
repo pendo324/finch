@@ -25,6 +25,10 @@ permissions:
 env:
   GO_VERSION: '1.22.9'
 
+defaults:
+  run:
+    shell: zsh su - ec2-user -c "${0}"
+
 jobs:
   test:
     runs-on:
@@ -38,10 +42,6 @@ jobs:
       container_report: ${{ steps.set-multiple-vars.outputs.CONTAINER_REPORT }}
       vm_serial_report: ${{ steps.set-multiple-vars.outputs.VM_SERIAL_REPORT }}
     steps:
-      - name: "setup"
-        shell: zsh {0}
-        run: |
-          dscacheutil -q user | grep -A 3 -B 2 -e uid:\ 5'[0-9][0-9]'
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
           # We need to get all the git tags to make version injection work. See VERSION in Makefile for more detail.
@@ -78,18 +78,15 @@ jobs:
       - name: Install Rosetta 2
         run: echo "A" | softwareupdate --install-rosetta || true
       - run: brew install lz4 automake autoconf libtool yq jq
-        shell: zsh {0}
       - name: Build project
         run: |
           export PATH="/opt/homebrew/opt/libtool/libexec/gnubin:$PATH"
           make
-        shell: zsh {0}
       - name: Run e2e tests
         run: |
           git status
           git clean -f -d
           REGISTRY=${{ steps.vars.outputs.has_creds == true && env.REGISTRY || '' }} make ${{ inputs.test-command }}
-        shell: zsh {0}
       - name: Set artifacts name outputs
         if: always()
         id: set-multiple-vars
