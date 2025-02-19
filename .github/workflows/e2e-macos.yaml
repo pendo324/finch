@@ -55,6 +55,8 @@ jobs:
           dscacheutil -q user | grep -A 3 -B 2 -e uid:\ 5'[0-9][0-9]'
           groups $(whoami)
           chown -R ec2-user:staff ./../../../../../../../../../
+          chmod g+rwx ./../../../../../../../../../
+          chmod g+s ./../../../../../../../../../
           chmod -R +ai "user:ec2-user allow list,add_file,search,add_subdirectory,delete_child,readattr,writeattr,readextattr,writeextattr,readsecurity,file_inherit,directory_inherit" ./../../../../../../../../../
           chmod -R +ai "group:staff allow list,add_file,search,add_subdirectory,delete_child,readattr,writeattr,readextattr,writeextattr,readsecurity,file_inherit,directory_inherit" ./../../../../../../../../../
           ls -lahe ./../../..
@@ -71,7 +73,7 @@ jobs:
       - name: "debug (root)"
         if: always()
         run: |
-          echo $0
+          ls -lahe $0
           echo "$PWD"
           ls -lahe .
         shell: zsh {0}
