@@ -97,7 +97,9 @@ jobs:
         run: |
           git status
           git clean -f -d
-          e2e_test_dir=$(mktemp -d 'finch-e2e.XXXXXXXXX')
+          e2e_test_dir_name=$(mktemp -d 'finch-e2e.XXXXXXXXX')
+          e2e_test_dir="/tmp/${e2e_test_dir_name}"
+          mkdir -p "${e2e_test_dir}"
           cp -a . "${e2e_test_dir}"
           cd "${e2e_test_dir}"
           REGISTRY=${{ steps.vars.outputs.has_creds == true && env.REGISTRY || '' }} make ${{ inputs.test-command }}
