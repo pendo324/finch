@@ -73,7 +73,7 @@ jobs:
           sudo systemctl stop finch-buildkit.service || true
           sudo systemctl stop finch-soci.service || true
           sudo sudo rpm -e runfinch-finch || true
-          sudo systemctl stop containerd.service
+          sudo systemctl stop containerd.service || true
           sudo systemctl daemon-reload
           sudo rm -rf /etc/finch
           sudo rm -rf /var/lib/finch
