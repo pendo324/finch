@@ -24,14 +24,9 @@ permissions:
 
 jobs:
   test:
-    runs-on:
-      [
-        "self-hosted",
-        "${{ inputs.os }}",
-        "${{ inputs.arch }}",
-        "${{ inputs.version }}",
-        "${{ inputs.runner-type }}",
-      ]
+    runs-on: [
+      "codebuild-FinchFork-CodeBuildRunners-AL2-x86_64-${{ github.run_id }}-${{ github.run_attempt }}"
+    ]
     timeout-minutes: 60
     outputs:
       has_creds: ${{ steps.vars.outputs.has_creds}}

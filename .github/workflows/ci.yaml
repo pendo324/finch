@@ -198,21 +198,21 @@ jobs:
   #     arch: ${{ matrix.arch }}
   #     runner-type: ${{ matrix.runner-type }}
   #     test-command: ${{ matrix.test-command }}
-  # linux-e2e-tests:
-  #   strategy:
-  #     fail-fast: false
-  #     matrix:
-  #       os: ['amazonlinux']
-  #       arch: ['X64', 'arm64']
-  #       version: ['2023', '2']
-  #       runner-type: ['test']
-  #   uses: ./.github/workflows/e2e-linux.yaml
-  #   secrets: inherit
-  #   with:
-  #     os: ${{ matrix.os }}
-  #     arch: ${{ matrix.arch }}
-  #     version: ${{ matrix.version }}
-  #     runner-type: ${{ matrix.runner-type }}
+  linux-e2e-tests:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ['amazonlinux']
+        arch: ['X64', 'arm64']
+        version: ['2023', '2']
+        runner-type: ['test']
+    uses: ./.github/workflows/e2e-linux.yaml
+    secrets: inherit
+    with:
+      os: ${{ matrix.os }}
+      arch: ${{ matrix.arch }}
+      version: ${{ matrix.version }}
+      runner-type: ${{ matrix.runner-type }}
 
   # mdlint:
   #   runs-on: ubuntu-latest
