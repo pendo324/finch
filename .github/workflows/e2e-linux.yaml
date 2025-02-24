@@ -80,6 +80,10 @@ jobs:
           sudo rm -rf /var/lib/containerd
           sudo rm -rf /var/soci-snapshotter
           sudo rm -rf ./_output
+      - name: Install dependencies
+        run: |
+          yum group install -y "Development Tools"
+          yum install golang zlib-static containerd nerdctl cni-plugins iptables
       - name: Build project
         run: |
           ./contrib/packaging/rpm/build.sh --local
