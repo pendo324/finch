@@ -32,10 +32,7 @@ defaults:
 
 jobs:
   test:
-    runs-on:
-      [
-        "codebuild-FinchFork-CodeBuildRunners-${{ github.run_id }}-${{ github.run_attempt }}",
-      ]
+    runs-on: "codebuild-FinchFork-CodeBuildRunners-${{ github.run_id }}-${{ github.run_attempt }}"
     timeout-minutes: 60
     outputs:
       has_creds: ${{ steps.vars.outputs.has_creds}}
